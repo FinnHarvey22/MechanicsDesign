@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 37366076}
   - component: {fileID: 37366075}
   - component: {fileID: 37366077}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2368,6 +2368,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 929667974029550097, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
+      propertyPath: m_CoyoteThreshold
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 969958807700409231, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
       propertyPath: m_Material
       value: 
@@ -2378,7 +2382,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2938755533799335079, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
       propertyPath: m_LayerMask.m_Bits
-      value: 4294967295
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 3600401525870630746, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2442,7 +2446,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1674682931}
   - component: {fileID: 1674682930}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
