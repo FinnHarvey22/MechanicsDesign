@@ -7,11 +7,16 @@ public class PlayerController : MonoBehaviour
 {
 	private PlayerControls m_ActionMap;
 	private CharacterMovement m_Movement;
-
+	[SerializeField] private HealthComponent m_Health;
 	private void Awake()
 	{
 		m_ActionMap = new PlayerControls();
 		m_Movement = GetComponent<CharacterMovement>();
+
+		if(m_Health != null)
+		{
+			m_Health.OnDamaged += Handle_HealthDamaged;
+		}
 	}
 
 	private void OnEnable()
@@ -50,5 +55,10 @@ public class PlayerController : MonoBehaviour
 	private void Handle_JumpCancelled(InputAction.CallbackContext context)
 	{
 		m_Movement.StopJump();
+	}
+
+	private void Handle_HealthDamaged(float current, float max, float change)
+	{
+		Debug.Log("Damaged: " + change);
 	}
 }
