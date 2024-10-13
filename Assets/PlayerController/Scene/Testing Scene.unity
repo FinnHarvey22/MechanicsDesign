@@ -2416,6 +2416,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!70 &885477902 stripped
+CapsuleCollider2D:
+  m_CorrespondingSourceObject: {fileID: 4855070989235704345, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
+  m_PrefabInstance: {fileID: 1338255539}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1127767164
 GameObject:
   m_ObjectHideFlags: 0
@@ -2562,8 +2567,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 929667974029550097, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
+      propertyPath: m_ColliderCapsule
+      value: 
+      objectReference: {fileID: 885477902}
+    - target: {fileID: 929667974029550097, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
       propertyPath: m_CoyoteThreshold
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 929667974029550097, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
+      propertyPath: m_JumpBufferingThreshold
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 969958807700409231, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
       propertyPath: m_Material

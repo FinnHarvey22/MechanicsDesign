@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -10,12 +11,20 @@ public class CharacterMovement : MonoBehaviour
 	[SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
 
+	[SerializeField] private CapsuleCollider2D m_ColliderCapsule;
+	private Coroutine m_CNudge;
+
 	private float m_InMove;
 	private bool m_isMoving;
 	private Coroutine m_CMove;
 
 	[SerializeField] private float m_CoyoteTimer;
 	[SerializeField] private float m_CoyoteThreshold;
+
+	[SerializeField] private float m_JumpBufferingTimer;
+	[SerializeField] private float m_JumpBufferingThreshold;
+	private Coroutine m_CJumpBuffering;
+	private bool m_Jumping = false;
 
 	private void Awake()
 	{
@@ -51,15 +60,26 @@ public class CharacterMovement : MonoBehaviour
 		if (m_GroundSensor.HasDetectedHit() || m_CoyoteTimer > 0)
 		{
 			m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+			//m_CNudge = StartCoroutine(HeadNudging());
+		}
+		else
+		{
+			m_JumpBufferingTimer = m_JumpBufferingThreshold;
+			m_CJumpBuffering = StartCoroutine(JumpBuffering());
 		}
 	}
-	public void StopJump() { }
+	public void StopJump() 
+	{ 
+	
+	}
 
 	private void FixedUpdate()
 	{
 		m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
 
 		m_CoyoteTimer -= Time.fixedDeltaTime;
+
+		m_JumpBufferingTimer -= Time.fixedDeltaTime;
 	}
 
 	private void OnCollisionExit2D(Collision2D collision)
@@ -72,11 +92,45 @@ public class CharacterMovement : MonoBehaviour
 
 	}
 
+	IEnumerator HeadNudging()
+	{
+		while (m_RB.linearVelocityY != 0)
+		{
+			Debug.Log(m_RB.linearVelocityY);
+			yield return new WaitForFixedUpdate();
+			m_ColliderCapsule.size = new Vector2(1.0f, 1.0f);
+			if (m_RB.linearVelocityX != 0)
+			{
+				Debug.Log(m_RB.linearVelocityX);
+				m_ColliderCapsule.size = new Vector2(0.5f, 1.0f);
+			}
+			
+		}
+		m_ColliderCapsule.size = new Vector2(1f, 2.0f);
+		
+		
+	}
+
+	IEnumerator JumpBuffering()
+	{
+		m_Jumping = true;
+		while (m_JumpBufferingTimer > 0)
+		{
+			yield return new WaitForFixedUpdate();
+			Debug.Log("Triggered");
+			if (m_GroundSensor.HasDetectedHit() && m_Jumping == true)
+			{
+				m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+				m_Jumping = false;
+			}
+		}
+	}
+
 	// TODO: add jump buffering, apex speed reduction thing (forgot proper name????), head nudging,step ups, improve coyote time system
 
 	//Jump buffering - Press space if !grounded -> start buffer timer -> if grounded & buffertimer > 0 -> jump 
 
-	 //apex speed reduction - if !grounded & velocity.y < [speed value] -> set gravity scale to [lower Gravity Scale] 
+	//apex speed reduction - if !grounded & velocity.y < [speed value] -> set gravity scale to [lower Gravity Scale] 
 
 
 	/*
