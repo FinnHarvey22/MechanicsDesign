@@ -60,7 +60,7 @@ public class CharacterMovement : MonoBehaviour
 		if (m_GroundSensor.HasDetectedHit() || m_CoyoteTimer > 0)
 		{
 			m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-			//m_CNudge = StartCoroutine(HeadNudging());
+			m_CNudge = StartCoroutine(HeadNudging());
 		}
 		else
 		{
@@ -125,6 +125,14 @@ public class CharacterMovement : MonoBehaviour
 			}
 		}
 	}
+
+	[SerializeField] private DesignPatterns_ObjectPooler m_ObjectPooler;
+
+	public void Shoot()
+	{
+		GameObject bullet = m_ObjectPooler.GetPooledObject("Bullet");
+	}
+
 
 	// TODO: add jump buffering, apex speed reduction thing (forgot proper name????), head nudging,step ups, improve coyote time system
 

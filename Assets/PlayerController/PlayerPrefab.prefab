@@ -82,6 +82,8 @@ MonoBehaviour:
   m_ColliderCapsule: {fileID: 0}
   m_CoyoteTimer: 0
   m_CoyoteThreshold: 0
+  m_JumpBufferingTimer: 0
+  m_JumpBufferingThreshold: 0
 --- !u!114 &7287660109704455578
 MonoBehaviour:
   m_ObjectHideFlags: 0

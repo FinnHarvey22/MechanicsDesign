@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour
 		m_ActionMap.Default.MoveHoriz.canceled += Handle_MoveCancelled;
 		m_ActionMap.Default.Jump.performed += Handle_JumpPerformed;
 		m_ActionMap.Default.Jump.canceled += Handle_JumpCancelled;
+
+		m_ActionMap.Default.Shoot.performed += Handle_ShootPerformed;
+		
 	}
 
 	private void OnDisable()
@@ -37,6 +40,9 @@ public class PlayerController : MonoBehaviour
 		m_ActionMap.Default.MoveHoriz.canceled -= Handle_MoveCancelled;
 		m_ActionMap.Default.Jump.performed -= Handle_JumpPerformed;
 		m_ActionMap.Default.Jump.canceled -= Handle_JumpCancelled;
+
+		m_ActionMap.Default.Shoot.performed -= Handle_ShootPerformed;
+
 	}
 
 	private void Handle_MovePerformed(InputAction.CallbackContext context)
@@ -61,4 +67,16 @@ public class PlayerController : MonoBehaviour
 	{
 		Debug.Log("Damaged: " + change);
 	}
+
+	public void Init() 
+	{
+		Debug.Log("Initialized Player Controller");
+	}
+
+	private void Handle_ShootPerformed(InputAction.CallbackContext context)
+	{
+
+	}
+
+	
 }
