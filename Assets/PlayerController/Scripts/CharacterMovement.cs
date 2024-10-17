@@ -1,10 +1,6 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
-<<<<<<< Updated upstream
-=======
-//using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
->>>>>>> Stashed changes
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class CharacterMovement : MonoBehaviour
@@ -17,6 +13,7 @@ public class CharacterMovement : MonoBehaviour
 
 	[SerializeField] private CapsuleCollider2D m_ColliderCapsule;
 	private Coroutine m_CNudge;
+	private Vector2 m_OverlapPoint;
 
 	private float m_InMove;
 	private bool m_isMoving;
@@ -28,7 +25,7 @@ public class CharacterMovement : MonoBehaviour
 	[SerializeField] private float m_JumpBufferingTimer;
 	[SerializeField] private float m_JumpBufferingThreshold;
 	private Coroutine m_CJumpBuffering;
-	private bool m_Jumping = false;
+	private bool m_WaitingToJump = false;
 
 	private void Awake()
 	{
@@ -57,13 +54,17 @@ public class CharacterMovement : MonoBehaviour
 		{
 			yield return new WaitForFixedUpdate();
 			m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
+			m_ColliderCapsule.size = new Vector2(m_ColliderCapsule.size.x, 1.0f);
+			
+			
 		}
+		m_ColliderCapsule.size = new Vector2(m_ColliderCapsule.size.x, 2.0f);
 	}
 	public void StartJump()
 	{
 		if (m_GroundSensor.HasDetectedHit() || m_CoyoteTimer > 0)
 		{
-			m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+			Jump();
 			m_CNudge = StartCoroutine(HeadNudging());
 		}
 		else
@@ -72,9 +73,18 @@ public class CharacterMovement : MonoBehaviour
 			m_CJumpBuffering = StartCoroutine(JumpBuffering());
 		}
 	}
+
+	public void Jump()
+	{
+		m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+		StartCoroutine(AntiGravityApex());
+	}
 	public void StopJump() 
-	{ 
-	
+	{
+		
+		StopCoroutine(AntiGravityApex());
+		//StopCoroutine(HeadNudging());
+		StopCoroutine(JumpBuffering());
 	}
 
 	private void FixedUpdate()
@@ -93,67 +103,74 @@ public class CharacterMovement : MonoBehaviour
 			m_CoyoteTimer = m_CoyoteThreshold;
 		}
 
-
 	}
 
-<<<<<<< Updated upstream
-=======
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (!collision.CompareTag("SemiSolid"))
-		{
-			//StartCoroutine(CollisionRepel(collision));
-		}
-	
-
+		m_OverlapPoint =  collision.ClosestPoint(this.transform.position);
+		Debug.Log(m_OverlapPoint.ToString());
 		
+		//m_RB.AddForce(m_OverlapPoint * -0.5f, ForceMode2D.Impulse);
 	}
-
-	private void OnTriggerExit2D(Collider2D collision)
-	{
-		//StopCoroutine(CollisionRepel(collision));
-	}
-
+	
 
 
 
 
 	//Student Work!
->>>>>>> Stashed changes
 	IEnumerator HeadNudging()
 	{
-		while (m_RB.linearVelocityY != 0)
+		while (m_RB.linearVelocityY > 0)
 		{
-			Debug.Log(m_RB.linearVelocityY);
 			yield return new WaitForFixedUpdate();
-			m_ColliderCapsule.size = new Vector2(1.0f, 1.0f);
-			if (m_RB.linearVelocityX != 0)
-			{
-				Debug.Log(m_RB.linearVelocityX);
-				m_ColliderCapsule.size = new Vector2(0.5f, 1.0f);
-			}
+			m_ColliderCapsule.size = new Vector2(0.5f, m_ColliderCapsule.size.y);
 			
 		}
-		m_ColliderCapsule.size = new Vector2(1f, 2.0f);
-		
-		
+		while (m_RB.linearVelocityY <= 0)
+		{
+			yield return new WaitForFixedUpdate();
+			m_ColliderCapsule.size = new Vector2(1.5f, m_ColliderCapsule.size.y);
+		}
+		m_ColliderCapsule.size = new Vector2(1.0f, m_ColliderCapsule.size.y);
+
 	}
 
 	IEnumerator JumpBuffering()
 	{
-		m_Jumping = true;
+		m_WaitingToJump = true;
 		while (m_JumpBufferingTimer > 0)
 		{
 			yield return new WaitForFixedUpdate();
-			Debug.Log("Triggered");
-			if (m_GroundSensor.HasDetectedHit() && m_Jumping == true)
+			if (m_GroundSensor.HasDetectedHit() && m_WaitingToJump == true)
 			{
-				m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-				m_Jumping = false;
+				Jump();
+				m_WaitingToJump = false;
 			}
 		}
 	}
 
+	IEnumerator AntiGravityApex()
+	{
+		while (m_RB.linearVelocityY > 2)
+		{
+			yield return new WaitForFixedUpdate();
+			m_RB.gravityScale = 1.0f;
+		}
+		while (m_RB.linearVelocityY > -2)
+		{
+			yield return new WaitForFixedUpdate();
+			m_RB.gravityScale = 0.3f;
+		}
+		while (m_RB.linearVelocityY <= -0.5f)
+		{
+			yield return new WaitForFixedUpdate();
+			m_RB.gravityScale = 1.0f;
+			m_MoveSpeed = 6f;
+		}
+
+		m_MoveSpeed = 5.0f;
+	}
+	
 	[SerializeField] private DesignPatterns_ObjectPooler m_ObjectPooler;
 
 	public void Shoot()
