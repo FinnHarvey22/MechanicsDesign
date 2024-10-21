@@ -11,7 +11,7 @@ public class CharacterMovement : MonoBehaviour
 	[SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
 
-	[SerializeField] private CapsuleCollider2D m_ColliderCapsule;
+	[SerializeField] private BoxCollider2D m_ColliderBox;
 	private Coroutine m_CNudge;
 	private Vector2 m_OverlapPoint;
 
@@ -54,11 +54,11 @@ public class CharacterMovement : MonoBehaviour
 		{
 			yield return new WaitForFixedUpdate();
 			m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
-			m_ColliderCapsule.size = new Vector2(m_ColliderCapsule.size.x, 1.0f);
-			
-			
+			m_ColliderBox.size = new Vector2(m_ColliderBox.size.x, 1.0f);
+
+
 		}
-		m_ColliderCapsule.size = new Vector2(m_ColliderCapsule.size.x, 2.0f);
+		m_ColliderBox.size = new Vector2(m_ColliderBox.size.x, 2.0f);
 	}
 	public void StartJump()
 	{
@@ -120,18 +120,19 @@ public class CharacterMovement : MonoBehaviour
 	//Student Work!
 	IEnumerator HeadNudging()
 	{
-		while (m_RB.linearVelocityY > 0)
+		while (m_RB.linearVelocityY > 0 )
 		{
 			yield return new WaitForFixedUpdate();
-			m_ColliderCapsule.size = new Vector2(0.5f, m_ColliderCapsule.size.y);
+			m_ColliderBox.size = new Vector2(0.5f, m_ColliderBox.size.y);
 			
 		}
-		while (m_RB.linearVelocityY <= 0)
+		while (m_RB.linearVelocityY < 0)
 		{
 			yield return new WaitForFixedUpdate();
-			m_ColliderCapsule.size = new Vector2(1.5f, m_ColliderCapsule.size.y);
+			m_ColliderBox.size = new Vector2(1.5f, m_ColliderBox.size.y);
 		}
-		m_ColliderCapsule.size = new Vector2(1.0f, m_ColliderCapsule.size.y);
+		
+		m_ColliderBox.size = new Vector2(1.0f, m_ColliderBox.size.y);
 
 	}
 
@@ -151,23 +152,23 @@ public class CharacterMovement : MonoBehaviour
 
 	IEnumerator AntiGravityApex()
 	{
-		while (m_RB.linearVelocityY > 2)
+		while (m_RB.linearVelocityY > 5)
 		{
 			yield return new WaitForFixedUpdate();
-			m_RB.gravityScale = 1.0f;
+			m_RB.gravityScale = 1.5f;
 		}
-		while (m_RB.linearVelocityY > -2)
+		while (m_RB.linearVelocityY > 0)
 		{
 			yield return new WaitForFixedUpdate();
-			m_RB.gravityScale = 0.3f;
+			m_RB.gravityScale = 0.75f;
 		}
-		while (m_RB.linearVelocityY <= -0.5f)
+		while (m_RB.linearVelocityY <= -0.0f)
 		{
 			yield return new WaitForFixedUpdate();
-			m_RB.gravityScale = 1.0f;
+			m_RB.gravityScale = 2.0f;
 			m_MoveSpeed = 6f;
 		}
-
+		m_RB.gravityScale = 1.5f;
 		m_MoveSpeed = 5.0f;
 	}
 	
@@ -180,6 +181,8 @@ public class CharacterMovement : MonoBehaviour
 
 
 	// TODO: add jump buffering, apex speed reduction thing (forgot proper name????), head nudging,step ups, improve coyote time system
+
+	//Done: Jump Buffering, Anti Gravity Apex, started head nudging
 
 	//Jump buffering - Press space if !grounded -> start buffer timer -> if grounded & buffertimer > 0 -> jump 
 
