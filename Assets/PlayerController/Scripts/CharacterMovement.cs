@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class CharacterMovement : MonoBehaviour
@@ -13,7 +14,7 @@ public class CharacterMovement : MonoBehaviour
 
 	[SerializeField] private BoxCollider2D m_ColliderBox;
 	private Coroutine m_CNudge;
-	private Vector2 m_OverlapPoint;
+	private Vector3 m_OverlapPoint;
 
 	private float m_InMove;
 	private bool m_isMoving;
@@ -107,12 +108,20 @@ public class CharacterMovement : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		m_OverlapPoint =  collision.ClosestPoint(this.transform.position);
-		Debug.Log(m_OverlapPoint.ToString());
-		
-		//m_RB.AddForce(m_OverlapPoint * -0.5f, ForceMode2D.Impulse);
-	}
+		if (!collision.CompareTag("SemiSolid"))
+		{
+			StartCoroutine(CollisionRepel(collision));
+		}
 	
+
+		
+	}
+
+	private void OnTriggerExit2D(Collider2D collision)
+	{
+		StopCoroutine(CollisionRepel(collision));
+	}
+
 
 
 
@@ -171,6 +180,24 @@ public class CharacterMovement : MonoBehaviour
 		m_RB.gravityScale = 1.5f;
 		m_MoveSpeed = 5.0f;
 	}
+
+	IEnumerator CollisionRepel(Collider2D Collision)
+	{
+		while (Collision != null)
+		{
+			if (Collision == null)
+			{
+				yield break;
+			}
+			yield return new WaitForFixedUpdate();
+			Debug.Log("triggered");
+			m_OverlapPoint = Collision.ClosestPoint(this.transform.position);
+			Debug.Log(m_OverlapPoint);
+			Vector3 Direction = (m_OverlapPoint - this.transform.position);
+			Debug.DrawLine(this.transform.position, m_OverlapPoint, Color.red, Mathf.Infinity);
+			m_RB.AddForceAtPosition(-(m_OverlapPoint - this.transform.position), this.transform.position, ForceMode2D.Impulse);
+		}
+	}
 	
 	[SerializeField] private DesignPatterns_ObjectPooler m_ObjectPooler;
 
@@ -180,83 +207,7 @@ public class CharacterMovement : MonoBehaviour
 	}
 
 
-	// TODO: add jump buffering, apex speed reduction thing (forgot proper name????), head nudging,step ups, improve coyote time system
 
-	//Done: Jump Buffering, Anti Gravity Apex, started head nudging
-
-	//Jump buffering - Press space if !grounded -> start buffer timer -> if grounded & buffertimer > 0 -> jump 
-
-	//apex speed reduction - if !grounded & velocity.y < [speed value] -> set gravity scale to [lower Gravity Scale] 
-
-
-	/*
-	JUMP BUFFERING
-
-	Jump Pressed
-	if (!grounded) 
-	{
-	start buffering timer
-	}
-
-	grounded event 
-	{
-	if (buffer timer > 0){ jump}
-	}
-
-
-
-	
-	*/
-
-	/*
-	 APEX SPEED REDUCTION
-
-	 Not grounded coroutine
-
-	while (velocity.y > [speed value])
-	{
-	going up
-	}
-	while (velocity.y < [speed value])
-	{
-	set gravity lower
-	}
-	while (velocity.y > [minus speed value])
-	{
-	 set gravity to normal
-	increase air control
-	}
-	*/
-
-	/*
-	HEAD NUDGING
-
-	Jump Function
-	{
-	start nudging coroutine
-	}
-
-	nudging coroutine
-	{
-	if (velocity.x != 0)
-		{
-		collision box size.x = 0.5
-		if (velocity.y != 0)
-			{
-			collision box size.y = 1
-			}
-		}
-		else { collision box size.y = 2 }
-	}
-	else
-	{
-	collision box size.x = 1
-
-		
-
-	
-	
-	*/
 
 
 }
