@@ -55,11 +55,11 @@ public class CharacterMovement : MonoBehaviour
 		{
 			yield return new WaitForFixedUpdate();
 			m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
-			m_ColliderBox.size = new Vector2(m_ColliderBox.size.x, 1.0f);
+			//m_ColliderBox.size = new Vector2(m_ColliderBox.size.x, 1.0f);
 
 
 		}
-		m_ColliderBox.size = new Vector2(m_ColliderBox.size.x, 2.0f);
+		//m_ColliderBox.size = new Vector2(m_ColliderBox.size.x, 2.0f);
 	}
 	public void StartJump()
 	{
@@ -90,6 +90,7 @@ public class CharacterMovement : MonoBehaviour
 
 	private void FixedUpdate()
 	{
+		
 		m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
 
 		m_CoyoteTimer -= Time.fixedDeltaTime;
@@ -195,7 +196,7 @@ public class CharacterMovement : MonoBehaviour
 			Debug.Log(m_OverlapPoint);
 			Vector3 Direction = (m_OverlapPoint - this.transform.position);
 			Debug.DrawLine(this.transform.position, m_OverlapPoint, Color.red, Mathf.Infinity);
-			m_RB.AddForceAtPosition(-(m_OverlapPoint - this.transform.position), this.transform.position, ForceMode2D.Impulse);
+			//m_RB.AddForceAtPosition(-(m_OverlapPoint - this.transform.position), this.transform.position, ForceMode2D.Impulse);
 		}
 	}
 	

@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
 		{
 			m_Health.OnDamaged += Handle_HealthDamaged;
 		}
+
+		
+		
 	}
 
 	private void OnEnable()
@@ -28,9 +31,12 @@ public class PlayerController : MonoBehaviour
 		m_ActionMap.Default.Jump.performed += Handle_JumpPerformed;
 		m_ActionMap.Default.Jump.canceled += Handle_JumpCancelled;
 
-		m_ActionMap.Default.Shoot.performed += Handle_ShootPerformed;
+		m_ActionMap.Default.BulletTime.performed += BulletTime_performed;
+		m_ActionMap.Default.BulletTime.canceled += BulletTime_canceled;
 		
 	}
+
+
 
 	private void OnDisable()
 	{
@@ -41,7 +47,9 @@ public class PlayerController : MonoBehaviour
 		m_ActionMap.Default.Jump.performed -= Handle_JumpPerformed;
 		m_ActionMap.Default.Jump.canceled -= Handle_JumpCancelled;
 
-		m_ActionMap.Default.Shoot.performed -= Handle_ShootPerformed;
+		
+		m_ActionMap.Default.BulletTime.performed -= BulletTime_performed;
+		m_ActionMap.Default.BulletTime.canceled -= BulletTime_canceled;
 
 	}
 
@@ -63,6 +71,7 @@ public class PlayerController : MonoBehaviour
 		m_Movement.StopJump();
 	}
 
+
 	private void Handle_HealthDamaged(float current, float max, float change)
 	{
 		Debug.Log("Damaged: " + change);
@@ -78,5 +87,15 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	
+    private void BulletTime_canceled(InputAction.CallbackContext context)
+    {
+		BulletTime.StopBulletTime();
+    }
+
+    private void BulletTime_performed(InputAction.CallbackContext context)
+    {
+        BulletTime.StartBulletTime();
+    }
+
+
 }

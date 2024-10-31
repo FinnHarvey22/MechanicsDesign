@@ -24,9 +24,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Shoot",
+                    "name": "BulletTime",
                     "type": "Button",
-                    "id": "9f56d9e9-c698-4418-8a35-43e028afa5e2",
+                    "id": "ea707afb-ca64-420a-8c2f-ddcea9fd70e2",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -102,12 +102,12 @@
                 },
                 {
                     "name": "",
-                    "id": "cb4c4057-b60d-422e-afcf-17fd2ece2a54",
+                    "id": "e5bb101b-67e7-4b4a-b181-a2f3c70781c1",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Shoot",
+                    "action": "BulletTime",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
