@@ -1,6 +1,10 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+<<<<<<< Updated upstream
+=======
+//using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+>>>>>>> Stashed changes
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class CharacterMovement : MonoBehaviour
@@ -92,6 +96,30 @@ public class CharacterMovement : MonoBehaviour
 
 	}
 
+<<<<<<< Updated upstream
+=======
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		if (!collision.CompareTag("SemiSolid"))
+		{
+			//StartCoroutine(CollisionRepel(collision));
+		}
+	
+
+		
+	}
+
+	private void OnTriggerExit2D(Collider2D collision)
+	{
+		//StopCoroutine(CollisionRepel(collision));
+	}
+
+
+
+
+
+	//Student Work!
+>>>>>>> Stashed changes
 	IEnumerator HeadNudging()
 	{
 		while (m_RB.linearVelocityY != 0)

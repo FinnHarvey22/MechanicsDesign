@@ -88,7 +88,11 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
+<<<<<<< Updated upstream
     m_Value: 0.919
+=======
+    m_Value: 0
+>>>>>>> Stashed changes
 --- !u!114 &7744974322228362417
 MonoBehaviour:
   m_ObjectHideFlags: 3
