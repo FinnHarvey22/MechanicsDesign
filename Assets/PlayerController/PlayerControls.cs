@@ -46,9 +46,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Shoot"",
+                    ""name"": ""BulletTime"",
                     ""type"": ""Button"",
-                    ""id"": ""9f56d9e9-c698-4418-8a35-43e028afa5e2"",
+                    ""id"": ""ea707afb-ca64-420a-8c2f-ddcea9fd70e2"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -124,12 +124,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""cb4c4057-b60d-422e-afcf-17fd2ece2a54"",
+                    ""id"": ""e5bb101b-67e7-4b4a-b181-a2f3c70781c1"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Shoot"",
+                    ""action"": ""BulletTime"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -142,7 +142,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Default = asset.FindActionMap("Default", throwIfNotFound: true);
         m_Default_MoveHoriz = m_Default.FindAction("MoveHoriz", throwIfNotFound: true);
         m_Default_Jump = m_Default.FindAction("Jump", throwIfNotFound: true);
-        m_Default_Shoot = m_Default.FindAction("Shoot", throwIfNotFound: true);
+        m_Default_BulletTime = m_Default.FindAction("BulletTime", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -211,14 +211,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private List<IDefaultActions> m_DefaultActionsCallbackInterfaces = new List<IDefaultActions>();
     private readonly InputAction m_Default_MoveHoriz;
     private readonly InputAction m_Default_Jump;
-    private readonly InputAction m_Default_Shoot;
+    private readonly InputAction m_Default_BulletTime;
     public struct DefaultActions
     {
         private @PlayerControls m_Wrapper;
         public DefaultActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @MoveHoriz => m_Wrapper.m_Default_MoveHoriz;
         public InputAction @Jump => m_Wrapper.m_Default_Jump;
-        public InputAction @Shoot => m_Wrapper.m_Default_Shoot;
+        public InputAction @BulletTime => m_Wrapper.m_Default_BulletTime;
         public InputActionMap Get() { return m_Wrapper.m_Default; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -234,9 +234,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Shoot.started += instance.OnShoot;
-            @Shoot.performed += instance.OnShoot;
-            @Shoot.canceled += instance.OnShoot;
+            @BulletTime.started += instance.OnBulletTime;
+            @BulletTime.performed += instance.OnBulletTime;
+            @BulletTime.canceled += instance.OnBulletTime;
         }
 
         private void UnregisterCallbacks(IDefaultActions instance)
@@ -247,9 +247,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Shoot.started -= instance.OnShoot;
-            @Shoot.performed -= instance.OnShoot;
-            @Shoot.canceled -= instance.OnShoot;
+            @BulletTime.started -= instance.OnBulletTime;
+            @BulletTime.performed -= instance.OnBulletTime;
+            @BulletTime.canceled -= instance.OnBulletTime;
         }
 
         public void RemoveCallbacks(IDefaultActions instance)
@@ -271,6 +271,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         void OnMoveHoriz(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnShoot(InputAction.CallbackContext context);
+        void OnBulletTime(InputAction.CallbackContext context);
     }
 }

@@ -1,10 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
-<<<<<<< Updated upstream
-=======
-//using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
->>>>>>> Stashed changes
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class CharacterMovement : MonoBehaviour
@@ -15,8 +12,9 @@ public class CharacterMovement : MonoBehaviour
 	[SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
 
-	[SerializeField] private CapsuleCollider2D m_ColliderCapsule;
+	[SerializeField] private BoxCollider2D m_ColliderBox;
 	private Coroutine m_CNudge;
+	private Vector3 m_OverlapPoint;
 
 	private float m_InMove;
 	private bool m_isMoving;
@@ -28,7 +26,7 @@ public class CharacterMovement : MonoBehaviour
 	[SerializeField] private float m_JumpBufferingTimer;
 	[SerializeField] private float m_JumpBufferingThreshold;
 	private Coroutine m_CJumpBuffering;
-	private bool m_Jumping = false;
+	private bool m_WaitingToJump = false;
 
 	private void Awake()
 	{
@@ -57,13 +55,17 @@ public class CharacterMovement : MonoBehaviour
 		{
 			yield return new WaitForFixedUpdate();
 			m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
+			//m_ColliderBox.size = new Vector2(m_ColliderBox.size.x, 1.0f);
+
+
 		}
+		//m_ColliderBox.size = new Vector2(m_ColliderBox.size.x, 2.0f);
 	}
 	public void StartJump()
 	{
 		if (m_GroundSensor.HasDetectedHit() || m_CoyoteTimer > 0)
 		{
-			m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+			Jump();
 			m_CNudge = StartCoroutine(HeadNudging());
 		}
 		else
@@ -72,13 +74,23 @@ public class CharacterMovement : MonoBehaviour
 			m_CJumpBuffering = StartCoroutine(JumpBuffering());
 		}
 	}
+
+	public void Jump()
+	{
+		m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+		StartCoroutine(AntiGravityApex());
+	}
 	public void StopJump() 
-	{ 
-	
+	{
+		
+		StopCoroutine(AntiGravityApex());
+		//StopCoroutine(HeadNudging());
+		StopCoroutine(JumpBuffering());
 	}
 
 	private void FixedUpdate()
 	{
+		
 		m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
 
 		m_CoyoteTimer -= Time.fixedDeltaTime;
@@ -93,16 +105,13 @@ public class CharacterMovement : MonoBehaviour
 			m_CoyoteTimer = m_CoyoteThreshold;
 		}
 
-
 	}
 
-<<<<<<< Updated upstream
-=======
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (!collision.CompareTag("SemiSolid"))
 		{
-			//StartCoroutine(CollisionRepel(collision));
+			StartCoroutine(CollisionRepel(collision));
 		}
 	
 
@@ -111,7 +120,7 @@ public class CharacterMovement : MonoBehaviour
 
 	private void OnTriggerExit2D(Collider2D collision)
 	{
-		//StopCoroutine(CollisionRepel(collision));
+		StopCoroutine(CollisionRepel(collision));
 	}
 
 
@@ -119,41 +128,78 @@ public class CharacterMovement : MonoBehaviour
 
 
 	//Student Work!
->>>>>>> Stashed changes
 	IEnumerator HeadNudging()
 	{
-		while (m_RB.linearVelocityY != 0)
+		while (m_RB.linearVelocityY > 0 )
 		{
-			Debug.Log(m_RB.linearVelocityY);
 			yield return new WaitForFixedUpdate();
-			m_ColliderCapsule.size = new Vector2(1.0f, 1.0f);
-			if (m_RB.linearVelocityX != 0)
-			{
-				Debug.Log(m_RB.linearVelocityX);
-				m_ColliderCapsule.size = new Vector2(0.5f, 1.0f);
-			}
+			m_ColliderBox.size = new Vector2(0.5f, m_ColliderBox.size.y);
 			
 		}
-		m_ColliderCapsule.size = new Vector2(1f, 2.0f);
+		while (m_RB.linearVelocityY < 0)
+		{
+			yield return new WaitForFixedUpdate();
+			m_ColliderBox.size = new Vector2(1.5f, m_ColliderBox.size.y);
+		}
 		
-		
+		m_ColliderBox.size = new Vector2(1.0f, m_ColliderBox.size.y);
+
 	}
 
 	IEnumerator JumpBuffering()
 	{
-		m_Jumping = true;
+		m_WaitingToJump = true;
 		while (m_JumpBufferingTimer > 0)
 		{
 			yield return new WaitForFixedUpdate();
-			Debug.Log("Triggered");
-			if (m_GroundSensor.HasDetectedHit() && m_Jumping == true)
+			if (m_GroundSensor.HasDetectedHit() && m_WaitingToJump == true)
 			{
-				m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-				m_Jumping = false;
+				Jump();
+				m_WaitingToJump = false;
 			}
 		}
 	}
 
+	IEnumerator AntiGravityApex()
+	{
+		while (m_RB.linearVelocityY > 5)
+		{
+			yield return new WaitForFixedUpdate();
+			m_RB.gravityScale = 1.5f;
+		}
+		while (m_RB.linearVelocityY > 0)
+		{
+			yield return new WaitForFixedUpdate();
+			m_RB.gravityScale = 0.75f;
+		}
+		while (m_RB.linearVelocityY <= -0.0f)
+		{
+			yield return new WaitForFixedUpdate();
+			m_RB.gravityScale = 2.0f;
+			m_MoveSpeed = 6f;
+		}
+		m_RB.gravityScale = 1.5f;
+		m_MoveSpeed = 5.0f;
+	}
+
+	IEnumerator CollisionRepel(Collider2D Collision)
+	{
+		while (Collision != null)
+		{
+			if (Collision == null)
+			{
+				yield break;
+			}
+			yield return new WaitForFixedUpdate();
+			Debug.Log("triggered");
+			m_OverlapPoint = Collision.ClosestPoint(this.transform.position);
+			Debug.Log(m_OverlapPoint);
+			Vector3 Direction = (m_OverlapPoint - this.transform.position);
+			Debug.DrawLine(this.transform.position, m_OverlapPoint, Color.red, Mathf.Infinity);
+			//m_RB.AddForceAtPosition(-(m_OverlapPoint - this.transform.position), this.transform.position, ForceMode2D.Impulse);
+		}
+	}
+	
 	[SerializeField] private DesignPatterns_ObjectPooler m_ObjectPooler;
 
 	public void Shoot()
@@ -162,81 +208,7 @@ public class CharacterMovement : MonoBehaviour
 	}
 
 
-	// TODO: add jump buffering, apex speed reduction thing (forgot proper name????), head nudging,step ups, improve coyote time system
 
-	//Jump buffering - Press space if !grounded -> start buffer timer -> if grounded & buffertimer > 0 -> jump 
-
-	//apex speed reduction - if !grounded & velocity.y < [speed value] -> set gravity scale to [lower Gravity Scale] 
-
-
-	/*
-	JUMP BUFFERING
-
-	Jump Pressed
-	if (!grounded) 
-	{
-	start buffering timer
-	}
-
-	grounded event 
-	{
-	if (buffer timer > 0){ jump}
-	}
-
-
-
-	
-	*/
-
-	/*
-	 APEX SPEED REDUCTION
-
-	 Not grounded coroutine
-
-	while (velocity.y > [speed value])
-	{
-	going up
-	}
-	while (velocity.y < [speed value])
-	{
-	set gravity lower
-	}
-	while (velocity.y > [minus speed value])
-	{
-	 set gravity to normal
-	increase air control
-	}
-	*/
-
-	/*
-	HEAD NUDGING
-
-	Jump Function
-	{
-	start nudging coroutine
-	}
-
-	nudging coroutine
-	{
-	if (velocity.x != 0)
-		{
-		collision box size.x = 0.5
-		if (velocity.y != 0)
-			{
-			collision box size.y = 1
-			}
-		}
-		else { collision box size.y = 2 }
-	}
-	else
-	{
-	collision box size.x = 1
-
-		
-
-	
-	
-	*/
 
 
 }
